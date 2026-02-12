@@ -1,0 +1,135 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["relationJoins"]
+  // output = "../generated/prisma_client"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String    @id @unique
+  firstName String
+  lastName  String
+  email     String    @unique
+  imageUrl  String
+  createdAt DateTime? @default(now())
+  updatedAt DateTime? @updatedAt
+
+  rooms Room[] @relation("RoomToUser")
+
+  participantsOnRooms ParticipantsInRoom[]
+  invitedUsersOnRooms InvitedUsersOnRoom[]
+
+  friends  FriendShip[] @relation("UserFriends")
+  friendOf FriendShip[] @relation("UserFriendOf")
+
+  callers   Call[] @relation("CallerUser")
+  receivers Call[] @relation("ReceiverUser")
+
+  notificationsFor Notification[] @relation("NotificationForUser")
+  NotificationFrom Notification[] @relation("NotificationFrom")
+}
+
+model ParticipantsInRoom {
+  userId    String
+  roomId    String
+  roomEnter DateTime  @default(now())
+  roomExit  DateTime? 
+  isHost    Boolean   @default(false)
+  createdAt DateTime? @default(now())
+  updatedAt DateTime? @updatedAt
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  room      Room      @relation(fields: [roomId], references: [id], onDelete: Cascade)
+
+  @@id([userId, roomId])
+}
+
+model Room {
+  id           String               @id @unique @default(uuid())
+  type         RoomType             @default(INSTANT)
+  title        String
+  description  String?
+  startTime    DateTime? @default(now())
+  endTime      DateTime?
+  summary      String?
+  chats        String?
+  createdById  String
+  createdBy    User                 @relation("RoomToUser", fields: [createdById], references: [id], onDelete: Cascade)
+  createdAt    DateTime?            @default(now())
+  updatedAt    DateTime?            @updatedAt
+  invitedUsers InvitedUsersOnRoom[]
+  participants ParticipantsInRoom[]
+}
+
+model FriendShip {
+  userId    String
+  friendId  String
+  user      User      @relation("UserFriends", fields: [userId], references: [id], onDelete: Cascade)
+  friend    User      @relation("UserFriendOf", fields: [friendId], references: [id], onDelete: Cascade)
+  createdAt DateTime? @default(now())
+  updatedAt DateTime? @updatedAt
+
+  @@id([userId, friendId])
+}
+
+model InvitedUsersOnRoom {
+  userId    String
+  roomId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  room      Room      @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  createdAt DateTime? @default(now())
+  updatedAt DateTime? @updatedAt
+
+  @@id([userId, roomId])
+}
+
+enum RoomType {
+  INSTANT
+  SCHEDULE
+}
+
+model Call {
+  id         String     @id @unique @default(uuid())
+  startTime  DateTime?  @default(now())
+  endTime    DateTime?
+  callerId   String
+  caller     User       @relation("CallerUser", fields: [callerId], references: [id], onDelete: Cascade)
+  receiverId String
+  receiver   User       @relation("ReceiverUser", fields: [receiverId], references: [id], onDelete: Cascade)
+  status     CallStatus @default(CALLING)
+  createdAt  DateTime?  @default(now())
+  updatedAt  DateTime?  @updatedAt
+}
+
+enum CallStatus {
+  CALLING
+  COMPLETED
+  MISSED
+  NO_ANSWER
+  REJECTED
+}
+
+model Notification {
+  id         String           @id @unique @default(uuid())
+  userId     String
+  user       User             @relation("NotificationForUser", fields: [userId], references: [id], onDelete: Cascade)
+  fromUserId String
+  fromUser   User             @relation("NotificationFrom", fields: [fromUserId], references: [id], onDelete: Cascade)
+  type       NotificationType
+  title      String
+  trigger    String
+}
+
+enum NotificationType {
+  MISSED
+  INVITED
+}

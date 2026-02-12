@@ -1,0 +1,34 @@
+import express, { Application } from 'express';
+import cors from 'cors';
+import * as dotenv from 'dotenv';
+import cookieParser from 'cookie-parser';
+import userRouter from './routes/users.routes';
+import roomRouter from './routes/room.routes';
+import callRouter from './routes/call.routes';
+import webhooksRouter from './routes/webhooks.routes';
+
+dotenv.config();
+
+const app: Application = express();
+
+// console.log(process.env.FRONTEND_URL);
+app.use(
+	cors({
+		origin: process.env.FRONTEND_URL,
+		credentials: true,
+	})
+);
+
+app.use('/api/v1/webhooks', webhooksRouter);
+app.use(cookieParser());
+
+app.use(express.json());
+app.use('/api/v1/user', userRouter);
+app.use('/api/v1/room', roomRouter);
+app.use('/api/v1/call', callRouter);
+
+app.get('/', async (req, res) => {
+	res.json({ message: 'Server is 100% up running' });
+});
+
+export default app;
