@@ -36,7 +36,7 @@ export default function Dashboard() {
 		const token = await getToken();
 		const response = await toast.promise(createInstantCall(token), {
 			loading: 'Wait to create a new Room',
-			success: 'New Room Created👌',
+			success: 'New Room Created',
 			error: 'Error happend, New Room Creation rejected 🤯',
 		});
 		console.log('response', response);
