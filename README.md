@@ -1,6 +1,6 @@
 # VEDO - Video Calling App
 ![Screenshot 2024-09-03 104337](https://github.com/user-attachments/assets/58ecdd06-51ef-46fc-b129-0c20d8f9fc34)
-
+ 
 ![Screenshot 2024-09-03 104454](https://github.com/user-attachments/assets/cb2bfe24-c961-4e4e-8b8d-f0cba291a57f)
 
 ![Screenshot 2024-09-03 104510](https://github.com/user-attachments/assets/9f32c178-d9fc-4a59-a4a1-b3cbf4f3da53)
