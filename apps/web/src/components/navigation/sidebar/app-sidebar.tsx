@@ -22,7 +22,7 @@ const AppSidebar = () => {
 	}> = [
 		{
 			label: 'Dashboard',
-			href: '/',
+			href: '/dashboard',
 			icon: (
 				<HomeIcon className="h-6 w-6 flex-shrink-0 dark:text-neutral-200" />
 			),

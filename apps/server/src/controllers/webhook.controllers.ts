@@ -7,9 +7,7 @@ export const handleClerkWebhook = async (
 	response: Response
 ) => {
 	try {
-		console.log(
-			`start receive webhook`
-		);
+		console.log(`start receive webhook`);
 		const evt = await verifyWebhook(request);
 
 		// Do something with payload

@@ -17,7 +17,7 @@ export const createInstantRoom = asyncHandler(
 
 		// const shortId = nanoid(8);
 
-		 console.log('User Id========>>', userId);
+		console.log('User Id========>>', userId);
 
 		try {
 			const user = await prisma.user.findUnique({
